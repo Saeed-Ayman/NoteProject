@@ -2,7 +2,6 @@
 
 use app\http\requests\profile\DestroyProfileRequest;
 use app\models\User;
-use core\helpers\Helper;
 use core\main\Authenticator;
 use core\main\Session;
 use core\routes\Response;

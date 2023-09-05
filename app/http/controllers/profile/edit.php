@@ -10,4 +10,4 @@ $user = User::all(['first_name', 'last_name', 'email'])
 
 Session::flash('user', $user);
 
-Response::view('profile.edit');
+Response::view('profile.settings');
