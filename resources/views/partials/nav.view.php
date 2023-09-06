@@ -1,9 +1,10 @@
 <?php
 
 use core\helpers\Helper;
+use core\routes\Router;
 
-$pageIs = fn($name) => Helper::urlIs("/$name") ? "text-indigo-500" : "text-white";
-$pageIs2 = fn($name) => Helper::urlIs("/$name") ? "text-white bg-indigo-600" : "text-gray-900 hover:bg-gray-50";
+$pageIs = fn($name) => Helper::routeIs("$name") ? "text-indigo-500" : "text-white";
+$pageIs2 = fn($name) => Helper::routeIs("$name") ? "text-white bg-indigo-600" : "text-gray-900 hover:bg-gray-50";
 ?>
 
 <header class="bg-gray-900 text-white">
@@ -15,12 +16,13 @@ $pageIs2 = fn($name) => Helper::urlIs("/$name") ? "text-white bg-indigo-600" : "
             </a>
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
-            <a href="/" class="text-sm font-semibold leading-6 <?= $pageIs('') ?>">Home</a>
+            <a href="<?= Router::route('home') ?>"
+               class="text-sm font-semibold leading-6 <?= $pageIs('home') ?>">Home</a>
             <?php if (Helper::isAuth()): ?>
-                <a href="/notes" class="text-sm font-semibold leading-6 <?= $pageIs('notes') ?>">Notes</a>
+                <a href="<?= Router::route('notes') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('notes') ?>">Notes</a>
             <?php endif; ?>
-            <a href="/about" class="text-sm font-semibold leading-6 <?= $pageIs('about') ?>">About</a>
-            <a href="/contact" class="text-sm font-semibold leading-6 <?= $pageIs('contact') ?>">Contact</a>
+            <a href="<?= Router::route('about') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('about') ?>">About</a>
+            <a href="<?= Router::route('contact') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('contact') ?>">Contact</a>
         </div>
         <div class="flex flex-1 justify-end content-center">
             <div>
@@ -53,13 +55,13 @@ $pageIs2 = fn($name) => Helper::urlIs("/$name") ? "text-white bg-indigo-600" : "
                                  style="display: none;"
                                  @click="open = false">
                                 <div class="rounded-md ring-1 ring-black ring-opacity-5 py-1 bg-white">
-                                    <a href="/profile/settings"
+                                    <a href="<?= Router::route('profile.settings') ?>"
                                        class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
                                         Profile
                                     </a>
 
                                     <!-- Authentication -->
-                                    <form method="POST" action="/logout">
+                                    <form method="POST" action="<?= Router::route('auth.logout') ?>">
                                         <input type="hidden" name="_method" value="POST">
                                         <button type="submit"
                                                 class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out">
@@ -71,11 +73,11 @@ $pageIs2 = fn($name) => Helper::urlIs("/$name") ? "text-white bg-indigo-600" : "
                         </div>
                     </div>
                 <?php else: ?>
-                    <a href="/login"
+                    <a href="<?= Router::route('auth.login') ?>"
                        class="border-4 border-indigo-600 hover:bg-indigo-600 font-medium rounded-lg text-xs px-3 py-1 text-center mr-2">
                         Login
                     </a>
-                    <a href="/register"
+                    <a href="<?= Router::route('auth.register') ?>"
                        class="bg-indigo-600 border-4 border-indigo-600 hover:border-indigo-500 hover:bg-indigo-500 font-medium rounded-lg text-xs px-3 py-1">
                         Register
                     </a>
@@ -116,15 +118,15 @@ $pageIs2 = fn($name) => Helper::urlIs("/$name") ? "text-white bg-indigo-600" : "
             <div class="mt-6 flow-root">
                 <div class="-my-6 divide-y divide-gray-500/10">
                     <div class="space-y-2 py-6">
-                        <a href="/"
-                           class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('') ?>">Home</a>
+                        <a href="<?= Router::route('home') ?>"
+                           class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('home') ?>">Home</a>
                         <?php if (Helper::isAuth()): ?>
-                            <a href="/notes"
+                            <a href="<?= Router::route('notes') ?>"
                                class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('notes') ?>">Notes</a>
                         <?php endif; ?>
-                        <a href="/about"
+                        <a href="<?= Router::route('about') ?>"
                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('about') ?>">About</a>
-                        <a href="/contact"
+                        <a href="<?= Router::route('contact') ?>"
                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('contact') ?>">Contact</a>
                     </div>
                 </div>

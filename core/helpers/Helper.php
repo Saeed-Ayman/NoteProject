@@ -2,6 +2,7 @@
 
 namespace core\helpers;
 
+use core\routes\Response;
 use JetBrains\PhpStorm\NoReturn;
 
 class Helper
@@ -20,8 +21,12 @@ class Helper
 
     public static function urlIs(string $url): bool
     {
-        $path = parse_url($_SERVER['REQUEST_URI'])['path'];
-        return $path === $url;
+        return parse_url($_SERVER['REQUEST_URI'])['path'] === $url;
+    }
+
+    public static function routeIs(string $name): bool
+    {
+        return Response::$current_route->name === $name;
     }
 
     public static function base_path(string $path): string
@@ -35,7 +40,7 @@ class Helper
 
         $path = str_replace('.', DIRECTORY_SEPARATOR, $controller);
 
-        return "$path.php";
+        return require self::base_path("$path.php");
     }
 
     public static function isAuth()

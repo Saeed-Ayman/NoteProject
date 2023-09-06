@@ -40,7 +40,7 @@
             <form class="space-y-6" action="/profile/destroy" method="POST">
                 <div class="p-6 space-y-6">
                     <div>
-                        <input type="hidden" name="_method" value="POST">
+                        <input type="hidden" name="_method" value="DELETE">
                         <label for="confirm-password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
                         <div class="mt-2">
                             <input id="confirm-password" name="password" type="password" autocomplete="password"

@@ -22,12 +22,12 @@ class Router
          * @var $route Route
          */
         foreach (self::$routes as $route) {
-            if ($route->uri === $uri && $route->method === $method) {
+            if ($route->uri === $uri && $route->method === strtoupper($method)) {
                 Middleware::resolve($route->middleware);
 
                 Response::$current_route = $route;
 
-                return require(Helper::base_path($route->controller));
+                return Helper::controller($route->controller);
             }
         }
 
@@ -48,14 +48,14 @@ class Router
     public static function route(string $name): string
     {
         if (!isset(self::$names[$name]))
-            throw new Exception('Current route not exists.');
+            throw new Exception("'$name' not exists.");
 
         /**
          * @var $route Route
          */
         $route = self::$routes[self::$names[$name]];
 
-        return $route->controller;
+        return $route->uri;
     }
 
     public static function getInstance(): Router
@@ -88,15 +88,23 @@ class Router
     public function name(string $name): static
     {
         self::for(self::$oldSize, count(self::$routes), function ($i) use ($name) {
-            $oldName = '';
-
-            if (isset($routes[$i]->name)) {
-                $oldName = $routes[$i]->name;
+            if (isset(self::$routes[$i]->name)) {
+                $oldName = self::$routes[$i]->name;
                 unset(self::$names[$oldName]);
+                $name .= $oldName;
             }
 
-            self::$names[$oldName . $name] = $i;
-            self::$routes[$i]->name = $oldName . $name;
+            self::$names[$name] = $i;
+            self::$routes[$i]->name = $name;
+        });
+
+        return $this;
+    }
+
+    public function prefix(string $uri): static
+    {
+        self::for(self::$oldSize, count(self::$routes), function ($i) use ($uri) {
+            self::$routes[$i]->uri = $uri . (self::$routes[$i]->uri ?? '');
         });
 
         return $this;

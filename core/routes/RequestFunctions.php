@@ -10,7 +10,7 @@ trait RequestFunctions
     static protected int $oldSize = 0;
     static protected Router $router;
 
-    static public function put(string $uri, string $controller): Router
+    public static function put(string $uri, string $controller): Router
     {
         return self::add($uri, $controller, 'PUT');
     }
@@ -18,7 +18,7 @@ trait RequestFunctions
     static private function add(string $uri, string $controller, string $method): Router
     {
         self::$oldSize = count(self::$routes);
-        self::$routes[] = new Route($uri, Helper::controller($controller), $method);
+        self::$routes[] = new Route($uri, $controller, $method);
 
         return self::getInstance();
     }
@@ -27,7 +27,8 @@ trait RequestFunctions
     {
         $n = count(self::$routes);
 
-        Router::get($uri . 's', $controller . '.index');
+        // TODO: Edit this to be dynamic
+        Router::get($uri . 's', $controller . '.index')->name('notes');
         Router::get($uri . 's/create', $controller . '.create');
         Router::post($uri . 's/create', $controller . '.create');
         Router::post($uri . 's', $controller . '.store');
@@ -41,23 +42,34 @@ trait RequestFunctions
         return self::$router;
     }
 
-    static public function get(string $uri, string $controller): Router
+    public static function get(string $uri, string $controller): Router
     {
         return self::add($uri, $controller, 'GET');
     }
 
-    static public function post(string $uri, string $controller): Router
+    public static function post(string $uri, string $controller): Router
     {
         return self::add($uri, $controller, 'POST');
     }
 
-    static public function patch(string $uri, string $controller): Router
+    public static function patch(string $uri, string $controller): Router
     {
         return self::add($uri, $controller, 'PATCH');
     }
 
-    static public function delete(string $uri, string $controller): Router
+    public static function delete(string $uri, string $controller): Router
     {
         return self::add($uri, $controller, 'DELETE');
+    }
+
+    public static function group(callable $fn): Router
+    {
+        $n = count(self::$routes);
+
+        $fn();
+
+        self::$oldSize = $n;
+
+        return self::$router;
     }
 }
