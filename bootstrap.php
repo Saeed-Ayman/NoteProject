@@ -22,8 +22,9 @@ App::bind(Database::class, function () {
 require(Helper::base_path('routes/app.php'));
 
 try {
-    Router::route();
+    Router::routes();
 } catch (ValidationException $e) {
+    Session::flash('form', Response::$current_route->name);
     Session::flash('errors', $e->errors);
     Session::flash('old', $e->old);
 

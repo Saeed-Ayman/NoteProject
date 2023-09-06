@@ -13,6 +13,7 @@ class Response
     const FORBIDDEN = 403;
     const NOT_FOUND = 404;
     const SERVER_ERROR = 500;
+    public static Route $current_route;
 
     #[NoReturn]
     public static function abort(int $status = Response::NOT_FOUND, string $msg = ''): void

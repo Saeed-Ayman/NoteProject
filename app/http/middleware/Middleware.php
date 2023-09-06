@@ -2,7 +2,9 @@
 
 namespace app\http\middleware;
 
+use core\routes\Closure;
+
 interface Middleware
 {
-    public function handle(): void;
+    public function handle(Closure $next): void;
 }

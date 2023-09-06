@@ -37,8 +37,8 @@
                 </button>
             </div>
             <form class="space-y-6" action="/password/update" method="POST">
-                <input type="hidden" name="_method" value="POST">
                 <div class="p-6 space-y-6">
+                    <input type="hidden" name="_method" value="POST">
                     <div>
                         <div class="w-full">
                             <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Old

@@ -2,12 +2,15 @@
 
 namespace app\http\middleware;
 
+use core\routes\Closure;
 use core\routes\Response;
 
 class Auth implements Middleware
 {
-    public function handle(): void
+    public function handle(Closure $next): void
     {
         if (!isset($_SESSION["user"])) Response::redirect('/login');
+
+        $next();
     }
 }

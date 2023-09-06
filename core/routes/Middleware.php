@@ -15,18 +15,20 @@ class Middleware
     /**
      * @throws Exception
      */
-    public static function resolve(string $key): void
+    public static function resolve(array $keys): void
     {
-        if (!$key) {
-            return;
+        if (!$keys) return;
+
+        $middlewares = [];
+        foreach ($keys as $key) {
+            $middleware = static::MAP[$key] ?? false;
+
+            if (!$middleware) {
+                throw new Exception("No matching middleware found for key '$key'.");
+            }
+
+            $middlewares[] = fn($next) => (new $middleware())->handle($next);
         }
-
-        $middleware = static::MAP[$key] ?? false;
-
-        if (!$middleware) {
-            throw new Exception("No matching middleware found for key '$key'.");
-        }
-
-        (new $middleware)->handle();
+        new Closure($middlewares);
     }
 }

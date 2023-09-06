@@ -7,44 +7,27 @@ use Exception;
 
 class Router
 {
-    static protected array $routes = [];
-    static protected int $oldSize = 0;
-    static protected Router $router;
+    use RequestFunctions;
 
-    static public function put(string $uri, string $controller): Router
-    {
-        return self::add($uri, $controller, 'PUT');
-    }
-
-    static private function add(string $uri, string $controller, string $method): Router
-    {
-        $middleware = '';
-        $controller = Helper::controller($controller);
-        self::$oldSize = count(self::$routes);
-        self::$routes[] = compact('uri', 'controller', 'method', 'middleware');
-
-        return self::getInstance();
-    }
-
-    public static function getInstance(): Router
-    {
-        if (!isset(self::$router)) self::$router = new Router();
-
-        return self::$router;
-    }
+    static protected array $names = [];
 
     /**
      * @throws Exception
      */
-    static public function route()
+    public static function routes()
     {
         [$uri, $method] = static::parseUrl();
 
+        /**
+         * @var $route Route
+         */
         foreach (self::$routes as $route) {
-            if ($route['uri'] === $uri && $route['method'] === $method) {
-                Middleware::resolve($route['middleware']);
+            if ($route->uri === $uri && $route->method === $method) {
+                Middleware::resolve($route->middleware);
 
-                return require(Helper::base_path($route['controller']));
+                Response::$current_route = $route;
+
+                return require(Helper::base_path($route->controller));
             }
         }
 
@@ -59,51 +42,62 @@ class Router
         ];
     }
 
-    public static function resource(string $uri, string $controller): Router
+    /**
+     * @throws Exception
+     */
+    public static function route(string $name): string
     {
-        $n = count(self::$routes);
+        if (!isset(self::$names[$name]))
+            throw new Exception('Current route not exists.');
 
-        Router::get($uri . 's', $controller . '.index');
-        Router::get($uri . 's/create', $controller . '.create');
-        Router::post($uri . 's/create', $controller . '.create');
-        Router::post($uri . 's', $controller . '.store');
-        Router::get($uri, $controller . '.show');
-        Router::get($uri . '/edit', $controller . '.edit');
-        Router::patch($uri . 's', $controller . '.update');
-        Router::delete($uri, $controller . '.destroy');
+        /**
+         * @var $route Route
+         */
+        $route = self::$routes[self::$names[$name]];
 
-        self::$oldSize = $n;
+        return $route->controller;
+    }
+
+    public static function getInstance(): Router
+    {
+        if (!isset(self::$router)) self::$router = new Router();
 
         return self::$router;
     }
 
-    static public function get(string $uri, string $controller): Router
+    public function middleware(string ...$middleware): static
     {
-        return self::add($uri, $controller, 'GET');
+        self::for(self::$oldSize, count(self::$routes), function ($i) use ($middleware) {
+            if (!isset(self::$routes[$i]->middleware))
+                self::$routes[$i]->middleware = [];
+
+            array_push(self::$routes[$i]->middleware, ...$middleware);
+        });
+
+        return $this;
     }
 
-    static public function post(string $uri, string $controller): Router
+    private
+    static function for(int $start, int $end, callable $fn): void
     {
-        return self::add($uri, $controller, 'POST');
-    }
-
-    static public function patch(string $uri, string $controller): Router
-    {
-        return self::add($uri, $controller, 'PATCH');
-    }
-
-    //-----------------------------------------------------------------------------------------
-
-    static public function delete(string $uri, string $controller): Router
-    {
-        return self::add($uri, $controller, 'DELETE');
-    }
-
-    public function middleware(string $middleware): static
-    {
-        while (self::$oldSize != count(self::$routes)) {
-            self::$routes[self::$oldSize++]['middleware'] = $middleware;
+        while ($start < $end) {
+            $fn($start++);
         }
+    }
+
+    public function name(string $name): static
+    {
+        self::for(self::$oldSize, count(self::$routes), function ($i) use ($name) {
+            $oldName = '';
+
+            if (isset($routes[$i]->name)) {
+                $oldName = $routes[$i]->name;
+                unset(self::$names[$oldName]);
+            }
+
+            self::$names[$oldName . $name] = $i;
+            self::$routes[$i]->name = $oldName . $name;
+        });
 
         return $this;
     }
