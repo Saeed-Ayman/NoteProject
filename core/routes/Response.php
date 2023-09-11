@@ -3,7 +3,6 @@
 namespace core\routes;
 
 use core\helpers\Helper;
-use JetBrains\PhpStorm\NoReturn;
 
 class Response
 {
@@ -15,7 +14,6 @@ class Response
     const SERVER_ERROR = 500;
     public static Route $current_route;
 
-    #[NoReturn]
     public static function abort(int $status = Response::NOT_FOUND, string $msg = ''): void
     {
         http_response_code($status);
@@ -33,15 +31,15 @@ class Response
 
         return require Helper::base_path("$path.view.php");
     }
-    
-    #[NoReturn]
+
     public static function redirect(string $path, int $state = Response::REDIRECT): void
     {
         header("location: $path", response_code: $state);
         exit();
     }
 
-    public static function previousUrl() {
+    public static function previousUrl()
+    {
         return $_SERVER['HTTP_REFERER'];
     }
 }

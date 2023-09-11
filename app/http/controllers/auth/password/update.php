@@ -5,6 +5,7 @@ use app\models\User;
 use core\main\Authenticator;
 use core\main\Session;
 use core\routes\Response;
+use core\routes\Router;
 use core\validator\Validator;
 
 $data = Validator::validate($_POST, EditPasswordRequest::role());
@@ -21,5 +22,4 @@ User::update(
     [':email' => $data['email']]
 );
 
-Response::redirect('/');
-
+Response::redirect(Router::route('profile.settings'));

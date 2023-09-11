@@ -5,6 +5,7 @@ use app\models\User;
 use core\main\Authenticator;
 use core\main\Session;
 use core\routes\Response;
+use core\routes\Router;
 use core\validator\Validator;
 
 
@@ -20,4 +21,4 @@ User::delete('id = :id', ['id' => Session::user('id')]);
 
 Authenticator::logout();
 
-Response::redirect('/');
+Response::redirect(Router::route('home'));
