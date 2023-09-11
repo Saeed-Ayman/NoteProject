@@ -2,6 +2,7 @@
 
 use core\main\Session;
 use core\routes\Response;
+use core\routes\Router;
 
 $errors = Session::get('errors');
 
@@ -9,14 +10,15 @@ Response::view('partials.header');
 ?>
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <a href="/"><img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+        <a href="<?= Router::route('home') ?>"><img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                          alt="Your Company"></a>
-        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your
-            account</h2>
+        <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Sign in to your account
+        </h2>
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-xl">
-        <form class="space-y-6" action="/login" method="POST">
+        <form class="space-y-6" action="<?= Router::route('auth.login') ?>" method="POST">
             <input type="hidden" name="_method" value="POST">
             <div>
                 <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
@@ -70,7 +72,7 @@ Response::view('partials.header');
 
         <p class="mt-10 text-center text-sm text-gray-500">
             Not a member?
-            <a href="/register" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Register</a>
+            <a href="<?= Router::route('auth.register') ?>" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Register</a>
         </p>
     </div>
 </div>

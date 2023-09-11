@@ -1,12 +1,9 @@
-<div class="w-full flex justify-between bg-white p-4 m-4 rounded-2xl hover:shadow">
+<?php use core\routes\Router; ?>
+<div class="w-full bg-white p-4 m-4 rounded-2xl hover:shadow">
     <button data-modal-target="edit-password" data-modal-toggle="edit-password"
-            class="text-indigo-600 hover:text-indigo-400"
+            class="w-full flex justify-between text-indigo-600 hover:text-indigo-400"
             type="button" id="edit-password-btn">
-        Edit your password
-    </button>
-    <button data-modal-target="edit-password" data-modal-toggle="edit-password"
-            class="text-indigo-600 hover:text-indigo-400"
-            type="button">
+        <span>Edit your password</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
              stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -36,9 +33,9 @@
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="space-y-6" action="/password/update" method="POST">
+            <form class="space-y-6" action="<?= Router::route('auth.password.update') ?>" method="POST">
                 <div class="p-6 space-y-6">
-                    <input type="hidden" name="_method" value="POST">
+                    <input type="hidden" name="_method" value="PUT">
                     <div>
                         <div class="w-full">
                             <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Old

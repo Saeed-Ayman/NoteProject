@@ -1,17 +1,10 @@
-<?php
-
-use core\main\Session;
-
-?>
-<div class="w-full flex justify-between bg-white p-4 m-4 rounded-2xl hover:shadow">
+<?php use core\main\Session;
+use core\routes\Router; ?>
+<div class="w-full bg-white p-4 m-4 rounded-2xl hover:shadow">
     <button data-modal-target="edit-info" data-modal-toggle="edit-info"
-            class="text-indigo-600 hover:text-indigo-400"
+            class="w-full flex justify-between text-indigo-600 hover:text-indigo-400"
             type="button" id="edit-info-btn">
-        Edit your name or email
-    </button>
-    <button data-modal-target="edit-info" data-modal-toggle="edit-info"
-            class="text-indigo-600 hover:text-indigo-400"
-            type="button">
+        <span>Edit your name or email</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
              stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -41,8 +34,8 @@ use core\main\Session;
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <form class="space-y-6" action="/profile/update" method="POST">
-                <input type="hidden" name="_method" value="POST">
+            <form class="space-y-6" action="<?= Router::route('profile.update') ?>" method="POST">
+                <input type="hidden" name="_method" value="PUT">
                 <div class="p-6 space-y-6">
                     <div class="flex sm:space-x-2 max-sm:space-y-6 max-sm:flex-col w-full">
                         <div class="w-full">

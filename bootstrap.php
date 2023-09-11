@@ -9,7 +9,7 @@ use core\main\Session;
 use core\routes\Response;
 use core\routes\Router;
 
-Session::run();
+Session::start();
 
 App::setContainer(new Container);
 

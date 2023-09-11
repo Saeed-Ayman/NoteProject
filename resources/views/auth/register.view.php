@@ -2,6 +2,7 @@
 
 use core\main\Session;
 use core\routes\Response;
+use core\routes\Router;
 
 $errors = Session::get('errors');
 
@@ -9,7 +10,7 @@ Response::view('partials.header');
 ?>
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
     <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <a href="/">
+        <a href="<?= Router::route('home') ?>">
             <img class="mx-auto h-10 w-auto"
                  src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                  alt="Your Company">
@@ -18,7 +19,7 @@ Response::view('partials.header');
     </div>
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-xl">
-        <form class="space-y-6" action="/register" method="POST">
+        <form class="space-y-6" action="<?= Router::route('auth.register') ?>" method="POST">
             <input type="hidden" name="_method" value="POST">
             <div class="flex sm:space-x-2 max-sm:space-y-6 max-sm:flex-col w-full">
 
@@ -110,7 +111,7 @@ Response::view('partials.header');
 
         <p class="mt-10 text-center text-sm text-gray-500">
             Member?
-            <a href="/login" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Login</a>
+            <a href="<?= Router::route('auth.login') ?>" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Login</a>
         </p>
     </div>
 </div>

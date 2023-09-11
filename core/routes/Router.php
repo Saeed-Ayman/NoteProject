@@ -42,13 +42,10 @@ class Router
         ];
     }
 
-    /**
-     * @throws Exception
-     */
     public static function route(string $name): string
     {
         if (!isset(self::$names[$name]))
-            throw new Exception("'$name' not exists.");
+            Response::abort(Response::SERVER_ERROR, "'$name' not exists.");
 
         /**
          * @var $route Route

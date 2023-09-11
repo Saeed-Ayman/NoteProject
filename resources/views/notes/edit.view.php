@@ -2,6 +2,7 @@
 
 use core\main\Session;
 use core\routes\Response;
+use core\routes\Router;
 
 $errors = Session::get('errors');
 
@@ -11,7 +12,7 @@ Response::view('partials.banner', ['heading' => 'Edit Note', 'slot' => 'notes.co
 ?>
     <article class="w-full flex flex-col justify-center items-center max-w-2xl m-auto"
              style="min-height: calc(100vh - 145px)">
-        <form action="/notes" method="post" class="mx-2 my-10 w-full p-10">
+        <form action="<?= Router::route('notes.update') ?>" method="post" class="mx-2 my-10 w-full p-10">
             <input type="hidden" name="_method" value="PATCH">
             <input type="hidden" name="id" value="<?= $note['id'] ?>">
 

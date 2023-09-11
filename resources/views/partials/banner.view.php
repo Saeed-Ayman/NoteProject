@@ -1,8 +1,4 @@
-<?php
-
-use core\routes\Response;
-
-?>
+<?php use core\routes\Response; ?>
 <div class="w-full p-4 px-8 bg-white shadow">
     <div class="flex justify-between max-w-7xl m-auto">
         <p class="text-lg font-bold">

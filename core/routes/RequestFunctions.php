@@ -2,8 +2,6 @@
 
 namespace core\routes;
 
-use core\helpers\Helper;
-
 trait RequestFunctions
 {
     static protected array $routes = [];
@@ -23,19 +21,24 @@ trait RequestFunctions
         return self::getInstance();
     }
 
-    public static function resource(string $uri, string $controller): Router
+    /**
+     * @param string $name
+     * @param string|null $controller if null then $controller = $name
+     * @return Router
+     */
+    public static function resource(string $name, string|null $controller = null): Router
     {
         $n = count(self::$routes);
 
-        // TODO: Edit this to be dynamic
-        Router::get($uri . 's', $controller . '.index')->name('notes');
-        Router::get($uri . 's/create', $controller . '.create');
-        Router::post($uri . 's/create', $controller . '.create');
-        Router::post($uri . 's', $controller . '.store');
-        Router::get($uri, $controller . '.show');
-        Router::get($uri . '/edit', $controller . '.edit');
-        Router::patch($uri . 's', $controller . '.update');
-        Router::delete($uri, $controller . '.destroy');
+        if (!$controller) $controller = $name;
+
+        Router::get("/{$name}s", "$controller.index")->name("{$name}s.index");
+        Router::get("/$name/create", "$controller.create")->name("{$name}s.create");
+        Router::post("/$name", "$controller.store")->name("{$name}s.store");
+        Router::get("/$name", "$controller.show")->name("{$name}s.show");
+        Router::get("/$name/edit", "$controller.edit")->name("{$name}s.edit");
+        Router::patch("/$name", "$controller.update")->name("{$name}s.update");
+        Router::delete("/$name", "$controller.destroy")->name("{$name}s.destroy");
 
         self::$oldSize = $n;
 

@@ -1,12 +1,13 @@
-<div class="w-full flex justify-between bg-white p-4 m-4 rounded-2xl hover:shadow">
+<?php
+
+use core\routes\Router;
+
+?>
+<div class="w-full bg-white p-4 m-4 rounded-2xl hover:shadow">
     <button data-modal-target="delete-account" data-modal-toggle="delete-account"
-            class="text-indigo-600 hover:text-indigo-400"
+            class="w-full flex justify-between text-indigo-600 hover:text-indigo-400"
             type="button" id="delete-account-btn">
-        Delete email
-    </button>
-    <button data-modal-target="delete-account" data-modal-toggle="delete-account"
-            class="text-indigo-600 hover:text-indigo-400"
-            type="button">
+        <span>Delete email</span>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
              stroke="currentColor" class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -37,26 +38,29 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form class="space-y-6" action="/profile/destroy" method="POST">
+            <form class="space-y-6" action="<?= Router::route('profile.destroy') ?>" method="POST">
+                <input type="hidden" name="_method" value="DELETE">
                 <div class="p-6 space-y-6">
                     <div>
-                        <input type="hidden" name="_method" value="DELETE">
-                        <label for="confirm-password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
-                        <div class="mt-2">
-                            <input id="confirm-password" name="password" type="password" autocomplete="password"
-                                   class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                        </div>
-                        <?php if (isset($errors['password'])): ?>
-                        <div class="flex items-center px-5 py-2 my-1 text-xs text-red-800 rounded-lg bg-red-50"
-                             role="alert">
-                            <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true"
-                                 xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
-                            </svg>
-                            <?= $errors['password'] ?>
+                        <div class="w-full">
+                            <label for="confirm-password"
+                                   class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                            <div class="mt-2">
+                                <input id="confirm-password" name="password" type="password" autocomplete="password"
+                                       class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                            </div>
+                            <?php if (isset($errors['password'])): ?>
+                                <div class="flex items-center px-5 py-2 my-1 text-xs text-red-800 rounded-lg bg-red-50"
+                                     role="alert">
+                                    <svg class="flex-shrink-0 inline w-4 h-4 mr-3" aria-hidden="true"
+                                         xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                                    </svg>
+                                    <?= $errors['password'] ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <?php endif; ?>
                 </div>
                 <!-- Modal footer -->
                 <div class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b">

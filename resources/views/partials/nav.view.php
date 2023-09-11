@@ -19,7 +19,7 @@ $pageIs2 = fn($name) => Helper::routeIs("$name") ? "text-white bg-indigo-600" : 
             <a href="<?= Router::route('home') ?>"
                class="text-sm font-semibold leading-6 <?= $pageIs('home') ?>">Home</a>
             <?php if (Helper::isAuth()): ?>
-                <a href="<?= Router::route('notes') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('notes') ?>">Notes</a>
+                <a href="<?= Router::route('notes.index') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('notes.index') ?>">Notes</a>
             <?php endif; ?>
             <a href="<?= Router::route('about') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('about') ?>">About</a>
             <a href="<?= Router::route('contact') ?>" class="text-sm font-semibold leading-6 <?= $pageIs('contact') ?>">Contact</a>
@@ -45,12 +45,6 @@ $pageIs2 = fn($name) => Helper::routeIs("$name") ? "text-white bg-indigo-600" : 
                                 </button>
                             </div>
                             <div x-show="open"
-                                 x-transition:enter="transition ease-out duration-200"
-                                 x-transition:enter-start="opacity-0 scale-95"
-                                 x-transition:enter-end="opacity-100 scale-100"
-                                 x-transition:leave="transition ease-in duration-75"
-                                 x-transition:leave-start="opacity-100 scale-100"
-                                 x-transition:leave-end="opacity-0 scale-95"
                                  class="absolute z-50 mt-2 w-48 rounded-md shadow-lg origin-top-right right-0"
                                  style="display: none;"
                                  @click="open = false">
@@ -121,8 +115,8 @@ $pageIs2 = fn($name) => Helper::routeIs("$name") ? "text-white bg-indigo-600" : 
                         <a href="<?= Router::route('home') ?>"
                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('home') ?>">Home</a>
                         <?php if (Helper::isAuth()): ?>
-                            <a href="<?= Router::route('notes') ?>"
-                               class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('notes') ?>">Notes</a>
+                            <a href="<?= Router::route('notes.index') ?>"
+                               class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('notes.index') ?>">Notes</a>
                         <?php endif; ?>
                         <a href="<?= Router::route('about') ?>"
                            class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 <?= $pageIs2('about') ?>">About</a>

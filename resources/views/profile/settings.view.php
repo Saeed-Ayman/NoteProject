@@ -5,20 +5,7 @@ use core\routes\Response;
 
 $errors = Session::get('errors');
 $user = Session::get('user');
-
-$script = '';
 $form = Session::get('form');
-
-if ($form) {
-    $script = "<script> window.addEventListener('load', () => document.getElementById('" .
-        match ($form) {
-            'profile.update' => 'edit-info',
-            'auth.password.update' => 'edit-password',
-            'profile.destroy' => 'delete-account',
-            default => ''
-        } .
-        "-btn').click()) </script>";
-}
 
 Response::view('partials.header');
 Response::view('partials.nav');
@@ -38,5 +25,15 @@ Response::view('profile.partial.destroy', [
     'errors' => $form === 'profile.destroy' ? $errors : [],
 ]);
 echo '</div>';
+
+$script = !$form ? '' :
+    "<script> window.addEventListener('load', () => document.getElementById('" .
+    match ($form) {
+        'profile.update' => 'edit-info',
+        'auth.password.update' => 'edit-password',
+        'profile.destroy' => 'delete-account',
+        default => ''
+    } .
+    "-btn').click()) </script>";
 
 Response::view('partials.footer', compact('script'));

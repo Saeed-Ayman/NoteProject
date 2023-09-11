@@ -4,7 +4,7 @@ namespace core\main;
 
 class Session
 {
-    public static function run(): void
+    public static function start(): void
     {
         session_start();
     }
