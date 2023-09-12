@@ -54,4 +54,24 @@ class Database
 
         return empty($result) ? $this->statement->rowCount() : $result;
     }
+
+    public static function CreateDB($hostname, $dbName, $username = 'root', $password = '')
+    {
+        // Create connection
+        $conn = new \mysqli($hostname, $username, $password);
+        // Check connection
+        if ($conn->connect_error) {
+            die("> Connection failed: " . $conn->connect_error);
+        }
+
+        // Create database
+        $sql = "CREATE DATABASE $dbName";
+        if ($conn->query($sql)) {
+            echo "> Database created successfully\n";
+        } else {
+            echo "> Error creating database: " . $conn->error;
+        }
+
+        $conn->close();
+    }
 }

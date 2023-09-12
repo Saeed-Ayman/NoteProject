@@ -1,16 +1,7 @@
 <?php
 
-if ($argc < 2) {
-    echo "sadasd";
-    return;
-}
+use core\console\Main;
 
-switch ($argv[1]) {
-    case 'serve':
-        exec('php -S localhost:8888 -t public');
-        return;
-    case 'migrate':
-        
-    default:
-        echo "sadasd";
-}
+require('./kernel.php');
+
+Main::run($argv);

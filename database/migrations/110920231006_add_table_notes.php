@@ -1,8 +1,8 @@
 <?php
 
-use database\core\Blueprint;
-use database\core\Migration;
-use database\core\Schema;
+use core\database\migration\Blueprint;
+use core\database\migration\Migration;
+use core\database\migration\Schema;
 
 return new class extends Migration
 {
@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('body');
-            $table->forginId('user_id')->references('id')->on('users');
+            $table->forginId('user_id', 'id', 'users');
             $table->timestamps();
         });
     }

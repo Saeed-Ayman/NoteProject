@@ -1,6 +1,6 @@
 <?php
 
-namespace database\core;
+namespace core\database\migration;
 
 abstract class Migration
 {
