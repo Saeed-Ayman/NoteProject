@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('migrations', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('body');
-            $table->forginId('user_id', 'id', 'users');
-            $table->timestamps();
+            $table->string('migration');
+            $table->integer('batch');
         });
     }
 

@@ -1,7 +1,5 @@
 <?php
 
-use core\console\Main;
-
 require('./kernel.php');
 
-Main::run($argv);
+\core\console\Main::run($argv);

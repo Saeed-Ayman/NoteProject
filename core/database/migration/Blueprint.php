@@ -5,11 +5,17 @@ namespace core\database\migration;
 class Blueprint
 {
     public $columns = [];
-    public $forginId = [];
+    public $foreignId = [];
 
     public function id(string $column = 'id'): static
     {
         $this->columns[$column] = ['INT', 'PRIMARY KEY', 'AUTO_INCREMENT'];
+        return $this;
+    }
+
+    public function integer(string $column): static
+    {
+        $this->columns[$column] = ['INT'];
         return $this;
     }
 
@@ -32,10 +38,10 @@ class Blueprint
         return $this;
     }
 
-    public function forginId(string $column, string $refColumn, string $table): static
+    public function foreignId(string $column, string $refColumn, string $table): static
     {
         $this->columns[$column] = ['INT'];
-        $this->forginId[$column] = [$table, $refColumn];
+        $this->foreignId[$column] = [$table, $refColumn];
         return $this;
     }
 }

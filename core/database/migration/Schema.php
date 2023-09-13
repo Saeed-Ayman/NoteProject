@@ -2,15 +2,14 @@
 
 namespace core\database\migration;
 
-use core\database\Database;
-use core\helpers\Helper;
+use core\console\Migrate;
 use core\helpers\Str;
 
 class Schema
 {
     public static function create(string $tableName, callable $fn): void
     {
-        echo "> Creating table $tableName\n";
+        echo "> Creating table $tableName.\n";
 
         $fn($blueprint = new Blueprint);
 
@@ -19,7 +18,7 @@ class Schema
             $prepareQuery[] = $column . ' ' . Str::concat($attr, ' ');
         }
 
-        foreach ($blueprint->forginId as $column => [$table, $refColumn]) {
+        foreach ($blueprint->foreignId as $column => [$table, $refColumn]) {
             $prepareQuery[] = "FOREIGN KEY ($column) REFERENCES $table($refColumn)";
         }
 
@@ -27,18 +26,12 @@ class Schema
         $query .= Str::concat($prepareQuery, ', ');
         $query .= ");";
 
-        $config = require(Helper::base_path('config\database.php'));
-        $a = (new Database($config))->query($query)->get();
-
-        echo "> Created table $tableName successfully\n";
+        Migrate::$db->query($query)->get();
     }
 
     public static function drop($tableName): void
     {
-        echo "> Droping table $tableName\n";
-        // DROP [TEMPORARY] TABLE [IF EXISTS] table_name 
-        $config = require(Helper::base_path('config\database.php'));
-        (new Database($config))->query("DROP TABLE IF EXISTS $tableName")->get();
-        echo "> Drop table $tableName successfully\n";
+        echo "> Dropping table $tableName.\n";
+        Migrate::$db->query("DROP TABLE IF EXISTS $tableName")->get();
     }
 }
