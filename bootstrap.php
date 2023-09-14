@@ -14,12 +14,12 @@ Session::start();
 App::setContainer(new Container);
 
 App::bind(Database::class, function () {
-    $databaseConfig = require(Helper::base_path('config/database.php'));
+    $databaseConfig = Helper::require('config\database.php');
 
     return new Database($databaseConfig);
 });
 
-require(Helper::base_path('routes/app.php'));
+Helper::require('routes\app.php');
 
 try {
     Router::routes();

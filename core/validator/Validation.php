@@ -15,7 +15,7 @@ class Validation
     {
         self::$validData = [];
         self::$errors = [];
-        $validationMessages = require(Helper::base_path('config/validation.php'));
+        $validationMessages = Helper::require('config\validation.php');
 
         foreach ($validation as $key => $value) {
             if (is_string($data[$key])) $data[$key] = trim(htmlspecialchars($data[$key]));
