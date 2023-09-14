@@ -1,7 +1,8 @@
 <?php
 
-namespace core\console;
+namespace core\console\migration;
 
+use core\console\Command;
 use core\database\Database;
 use core\database\DB;
 use core\database\migration\Migration;
@@ -17,7 +18,8 @@ class Migrate extends Command
     public const FILE_PATH = 'database\migrations';
     public const DB_CONFIG = 'config\database.php';
 
-    public static array $map = [
+    public static array $commands = [
+        // [command] => [description]
         'default' => 'Run all migrations', // 'migrate function'
         'install' => 'Create the migration repository',
         'fresh' => 'Drop all tables and re-run all migrations',
@@ -27,12 +29,18 @@ class Migrate extends Command
         'status' => 'Show the status of each migration',
     ];
 
+    public static array $options = [
+        // [option] => [needInput[true/false], class]
+        '--seed' => [false, \core\console\migration\Seed::class],
+        '--seeder' => [true, \core\console\migration\Seed::class],
+    ];
+
     public static function run(array $attr)
     {
         $command = $attr['command'] ?? 'migrate';
 
-        if ($command !== 'migrate' && !isset(static::$map[$command]))
-            throw \core\console\ArtisanException::new('migrate', $command);
+        if ($command !== 'migrate' && !isset(static::$commands[$command]))
+            throw \core\console\ArtisanException::new("migrate:$command");
 
         Migrate::prepareDB(!($command === 'install' || $command === 'fresh'));
         Migrate::$command();
@@ -90,14 +98,16 @@ class Migrate extends Command
          * @var \core\database\migration\Migration $migration
          */
         echo "> Creating migrations table. \t";
-        $migration = new (Helper::require('core\console\MigrateTable.php'));
+        $migration = new (Helper::require('core\console\migration\MigrateTable.php'));
         $migration->up();
         echo "[Done]\n";
     }
 
     private static function fresh()
     {
+        // TODO: this function make race condition
         static::$db->dropAllTables();
+        sleep(1);
         static::install();
         static::migrate();
     }

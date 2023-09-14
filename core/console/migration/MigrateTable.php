@@ -1,10 +1,11 @@
 <?php
 
+namespace core\console\migration;
+
 use core\database\migration\Blueprint;
-use core\database\migration\Migration;
 use core\database\migration\Schema;
 
-return new class extends Migration
+return new class extends \core\database\migration\Migration
 {
     /**
      * Run the migrations.

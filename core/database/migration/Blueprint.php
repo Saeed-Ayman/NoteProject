@@ -27,8 +27,8 @@ class Blueprint
 
     public function timestamps(): static
     {
-        $this->columns['created_at'] = ['DATETIME'];
-        $this->columns['updated_at'] = ['DATETIME'];
+        $this->columns['created_at'] = ['DATETIME', 'DEFAULT CURRENT_TIMESTAMP'];
+        $this->columns['updated_at'] = ['DATETIME', 'ON UPDATE CURRENT_TIMESTAMP'];
         return $this;
     }
 
