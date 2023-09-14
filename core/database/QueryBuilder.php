@@ -41,8 +41,8 @@ class QueryBuilder
 
     public function orderBy(string $column, bool $asc = true): static
     {
-        if (isset($this->orderBy)) $this->orderBy .= ',';
-        $this->orderBy .= $column . ($asc ? '' : 'DESC');
+        if ($this->orderBy) $this->orderBy .= ',';
+        $this->orderBy .= $column . ($asc ? '' : ' DESC');
 
         return $this;
     }
@@ -73,6 +73,13 @@ class QueryBuilder
         if ($this->limit !== -1) $query .= " LIMIT $this->limit";
 
         if ($this->offset !== -1) $query .= " OFFSET $this->offset";
+
+        $this->attr = [];
+        $this->args = [];
+        $this->conditions = '1 = 1';
+        $this->orderBy = '';
+        $this->limit = -1;
+        $this->offset = -1;
 
         return $query . ";";
     }

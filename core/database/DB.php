@@ -15,10 +15,10 @@ class DB
     {
         return App::resolver(Database::class)->query(
             "INSERT INTO $table ("
-            . Str::concat($attr, ',')
-            . ") VALUES ("
-            . Str::concat($attr, ',', ':')
-            . ")",
+                . Str::concat($attr, ',')
+                . ") VALUES ("
+                . Str::concat($attr, ',', ':')
+                . ")",
             $data
         )->get();
     }
@@ -27,14 +27,18 @@ class DB
      * @throws Exception
      */
     public static function update(
-        string $table, array $attr, array $data, string $conditions, array $args = []): array|int
-    {
+        string $table,
+        array $attr,
+        array $data,
+        string $conditions,
+        array $args = []
+    ): array|int {
         foreach ($args as $key => $value) $data[$key] = $value;
 
         return App::resolver(Database::class)->query(
             "UPDATE $table"
-            . " set " . Str::concat(array_map(fn($str) => "$str = :$str", $attr), ',')
-            . " WHERE $conditions",
+                . " set " . Str::concat(array_map(fn ($str) => "$str = :$str", $attr), ',')
+                . " WHERE $conditions",
             $data
         )->get();
     }

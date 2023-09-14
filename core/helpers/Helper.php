@@ -7,7 +7,6 @@ use JetBrains\PhpStorm\NoReturn;
 
 class Helper
 {
-    #[NoReturn]
     public static function dd(mixed ...$values): void
     {
         foreach ($values as $value) {
@@ -40,11 +39,16 @@ class Helper
 
         $path = str_replace('.', DIRECTORY_SEPARATOR, $controller);
 
-        return require self::base_path("$path.php");
+        return static::require("$path.php");
     }
 
     public static function isAuth()
     {
         return $_SESSION['user'] ?? false;
+    }
+
+    public static function require(string $path)
+    {
+        return require(static::base_path($path));
     }
 }

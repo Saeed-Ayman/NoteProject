@@ -3,48 +3,85 @@
 namespace core\console;
 
 use core\database\Database;
+use core\database\DB;
+use core\database\migration\Migration;
+use core\database\QueryBuilder;
 use core\helpers\Helper;
+use core\main\App;
+use core\main\Container;
 
 class Migrate extends Command
 {
-    public static Database $db;
+    private static Database $db;
 
-    public const MAP = [
-        'migrate',
-        'fresh',
-        'install'
+    public const FILE_PATH = 'database\migrations';
+    public const DB_CONFIG = 'config\database.php';
+
+    public static array $map = [
+        'default' => 'Run all migrations', // 'migrate function'
+        'install' => 'Create the migration repository',
+        'fresh' => 'Drop all tables and re-run all migrations',
+        'rollback' => 'Rollback the last database migration',
+        'reset' => 'Rollback all database migrations',
+        'refresh' => 'Reset and re-run all migrations',
+        'status' => 'Show the status of each migration',
     ];
 
     public static function run(array $attr)
     {
-        Migrate::prepareDB();
-
         $command = $attr['command'] ?? 'migrate';
 
+        if ($command !== 'migrate' && !isset(static::$map[$command]))
+            throw \core\console\ArtisanException::new('migrate', $command);
+
+        Migrate::prepareDB(!($command === 'install' || $command === 'fresh'));
         Migrate::$command();
     }
 
-    private static function prepareDB()
+    private static function prepareDB(bool $withMigrationTable)
     {
-        $config = require(Helper::base_path('config\database.php'));
+        $config = Helper::require(static::DB_CONFIG);
         $dbIsExists = Database::tryConnection($config['host'], $config['dbname']);
-        static::$db = new Database($config);
 
-        if (!$dbIsExists || !static::$db->containTable('migrations')) {
+        App::setContainer(new Container());
+        App::bind(Database::class, function () {
+            $databaseConfig = Helper::require(static::DB_CONFIG);
+
+            return new Database($databaseConfig);
+        });
+
+        static::$db = App::resolver(Database::class);
+
+        if ((!$dbIsExists || !static::$db->containTable('migrations')) && $withMigrationTable) {
             static::install();
         }
     }
 
-    private static function freshDB()
+    private static function migrate()
     {
-        static::$db->dropAllTables();
-        static::install();
-    }
+        $files =  static::migrationFiles();
+        $batch = static::currentBatch() + 1;
+        $oldMigrations = static::oldMigrations();
 
-    private static function fresh()
-    {
-        static::freshDB();
-        static::migrate();
+        foreach ($files as $file) {
+            if (in_array($file, $oldMigrations)) continue;
+
+            echo "> Creating table $file \t";
+
+            /**
+             * @var \core\database\migration\Migration $migration 
+             */
+            $migrateTable = (new (Helper::require(static::FILE_PATH . "\\$file.php"))());
+            $migrateTable->up();
+
+            DB::insert(
+                'migrations',
+                ['migration', 'batch'],
+                ['migration' => $file, 'batch' => $batch]
+            );
+
+            echo "[Done]\n";
+        }
     }
 
     private static function install()
@@ -52,21 +89,99 @@ class Migrate extends Command
         /**
          * @var \core\database\migration\Migration $migration
          */
-        $migration = new (require(Helper::base_path('core\console\MigrateTable.php')));
+        echo "> Creating migrations table. \t";
+        $migration = new (Helper::require('core\console\MigrateTable.php'));
         $migration->up();
+        echo "[Done]\n";
     }
 
-    private static function migrate()
+    private static function fresh()
     {
-        $files = glob(Helper::base_path("database\migrations\*.php"));
+        static::$db->dropAllTables();
+        static::install();
+        static::migrate();
+    }
 
-        foreach ($files as $file) {
+    private static function rollback()
+    {
+        $oldMigrations = static::oldMigrations(static::currentBatch(), true);
+        static::rollbackTables($oldMigrations);
+    }
+
+    private static function reset()
+    {
+        static::rollbackTables(static::oldMigrations(desc: true));
+    }
+
+    private static function refresh()
+    {
+        static::reset();
+        static::migrate();
+    }
+
+    private static function status()
+    {
+        $files = static::migrationFiles();
+
+        foreach (static::oldMigrations(withBatch: true) as $m) {
+            $i = array_search($m['migration'], $files);
+
+            if ($i === null) {
+                echo "{$m['migration']} \t[{$m['batch']}] Ran-Del\n";
+                continue;
+            }
+
+            unset($files[$i]);
+            echo "{$m['migration']} \t[{$m['batch']}] Ran\n";
+        }
+
+        foreach ($files as $f) {
+            echo "$f \tPending\n";
+        }
+    }
+
+    private static function currentBatch()
+    {
+        return (new QueryBuilder('migrations'))->all(['MAX(batch) AS MAX'])->find()['MAX'] ?? 0;
+    }
+
+    private static function oldMigrations(int|null $batch = null, $desc = false, $withBatch = false)
+    {
+        $builder = new QueryBuilder('migrations');
+        $builder->all(['migration']);
+
+        if ($batch) $builder->where("batch = $batch");
+        if ($desc) $builder->orderBy('migration', false);
+
+        if ($withBatch) return $builder->all(['batch'])->get() ?: [];
+
+        return array_map(fn ($m) => $m['migration'], $builder->get() ?: []);
+    }
+
+    private static function migrationFiles()
+    {
+        return array_map(
+            function ($file) {
+                $fileName = strrchr($file, '\\');
+                return substr($fileName, 1, strlen($fileName) - 5);
+            },
+            glob(Helper::base_path(static::FILE_PATH . '\*.php'))
+        );
+    }
+
+    private static function rollbackTables(array $migrations)
+    {
+        foreach ($migrations as $migration) {
+            echo "> Dropping table $migration. \t";
             /**
-             * @var \core\database\migration\Migration $migration 
+             * @var Migration $migrateTable
              */
-            $migration = (new (require($file))());
+            $migrateTable = new (Helper::require(static::FILE_PATH . "\\$migration.php"));
+            $migrateTable->down();
 
-            $migration->up();
+            DB::delete('migrations', "migration = '$migration'");
+
+            echo "[Done]\n";
         }
     }
 }

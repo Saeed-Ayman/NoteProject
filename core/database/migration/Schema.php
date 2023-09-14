@@ -2,15 +2,14 @@
 
 namespace core\database\migration;
 
-use core\console\Migrate;
+use core\database\Database;
 use core\helpers\Str;
+use core\main\App;
 
 class Schema
 {
     public static function create(string $tableName, callable $fn): void
     {
-        echo "> Creating table $tableName.\n";
-
         $fn($blueprint = new Blueprint);
 
         $prepareQuery = [];
@@ -26,12 +25,19 @@ class Schema
         $query .= Str::concat($prepareQuery, ', ');
         $query .= ");";
 
-        Migrate::$db->query($query)->get();
+        /**
+         * @var Database $db
+         */
+        $db = App::resolver(Database::class);
+        $db->query($query)->get();
     }
 
     public static function drop($tableName): void
     {
-        echo "> Dropping table $tableName.\n";
-        Migrate::$db->query("DROP TABLE IF EXISTS $tableName")->get();
+        /**
+         * @var Database $db
+         */
+        $db = App::resolver(Database::class);
+        $db->query("DROP TABLE IF EXISTS $tableName")->get();
     }
 }

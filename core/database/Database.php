@@ -2,7 +2,6 @@
 
 namespace core\database;
 
-use core\helpers\Helper;
 use core\routes\Response;
 use PDO;
 use PDOException;
